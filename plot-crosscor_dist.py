@@ -6,17 +6,16 @@ from numpy import ma
 import seaborn as sns
 
  
-def crosscor_dist(mode, form):
+def crosscor_dist(form):
     # I/O files
-    infile = 'dist-'+str(mode)+'-'+str(form)+'.dat'
-    infile2 = 'crosscor-'+str(mode)+'-'+str(form)+'.dat'			  #First input file
+    infile1 = 'dist-'+str(form)+'.dat'
+    infile2 = 'crosscor-'+str(form)+'.dat'
     
     aa_num = 612
     het_num = 21
     
     xlbl='Amino Acid Number'
     ylbl='Amino Acid Number'
-    ttl=''
     mi=[]
     mi2=[]
     mj=[]
@@ -26,7 +25,7 @@ def crosscor_dist(mode, form):
     i=-1
     j=-1
     		
-    inlines=open(infile,'r').readlines()
+    inlines=open(infile1,'r').readlines()
     
     if inlines[-1]=='\n':
     	inlines[-1:]=[]
@@ -81,12 +80,7 @@ def crosscor_dist(mode, form):
     ol2=np.array(ol2)
     
     
-    #---------------------------------------------------------------------
-    # Igor's suggestions
-    # Set Seaborn
     sns.set()
-
-    # Zm = ma.masked_where(mi2 < mj2, ol2)
     
     # Create masking matrix
     mask_dist = np.triu(ol)
@@ -116,17 +110,16 @@ def crosscor_dist(mode, form):
     fig=plt.figure(1)
     ax=fig.add_subplot(111)
 
+    # Plot distance map
     ax1 = sns.heatmap(ol, vmin=0,vmax=16, mask=mask_dist, square=True,cmap=plt.cm.gist_yarg_r, 
                     cbar_kws={'label':'Distance [ $\AA{}$ ]','ticks':np.arange(0,18,2)})
-
+    # Plot cross-correlation map 
     ax2 = sns.heatmap(ol2,  vmin=-1,vmax=1, mask=mask_cross, square=True,cmap=plt.cm.RdBu_r, 
                     cbar_kws={'label': 'Cross-correlation','ticks':np.arange(-1.00,1.25,0.25)})
     
     # Alternative brutal method to draw spines
     for _, spine in ax.spines.items():
         spine.set_visible(True)
-    
-    ax.set_title(ttl)
     
     ax.set_xlabel(xlbl)
     
@@ -201,10 +194,9 @@ def crosscor_dist(mode, form):
 
 
 #%% Run crosscor_dist fucntion
-for m in [25]:
-    for f in [0,1,2]:
-        plt.close('all')
-        plt, fig = crosscor_dist(m,f)
-        fig_path = 'graph-'+str(m)+'-'+str(f)
-        fig.savefig(fig_path+'.png', dpi=600, bbox_inches='tight', format='png')
+for f in [0,1,2]:
+    plt.close('all')
+    plt, fig = crosscor_dist(m,f)
+    fig_path = 'graph-'+str(m)+'-'+str(f)
+    fig.savefig(fig_path+'.png', dpi=600, bbox_inches='tight', format='png')
 print('Figures saved.')        
