@@ -1,0 +1,1 @@
+print("Hello, Igor!\nSubmit to JRSI by Friday!")
