@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This script plots 1-point mutational maps of relative fluactuation free energy change and global allostery for 6lu7 (Mpro) ENM.
+This script plots 1-point mutational maps of relative fluactuation free energy change and global allostery for 6lu7 (SARS-CoV-2 Main Proteasse) ENM.
 
 Written by:
             Igors Dubanevics (id583 at york dot ac dot uk)
