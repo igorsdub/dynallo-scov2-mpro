@@ -1,90 +1,32 @@
-import os,sys, math, numpy as np, itertools
-from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
-from pylab import *
-from numpy import ma
+import numpy as np
 import seaborn as sns
+import pandas as pd
 
- 
+forms = ("apo","holo1","holo2")
+
 def crosscor_dist(form):
     # I/O files
-    infile1 = 'dist-'+str(form)+'.dat'
-    infile2 = 'crosscor-'+str(form)+'.dat'
+    infile_dist = '6lu7_dist_'+ form +'.xlsx'
+    infile_cros = '6lu7_cross-cor_'+ form +'.xlsx'
     
     aa_num = 612
     het_num = 21
     
     xlbl='Amino Acid Number'
     ylbl='Amino Acid Number'
-    mi=[]
-    mi2=[]
-    mj=[]
-    mj2=[]
-    ol=[]
-    ol2=[]
-    i=-1
-    j=-1
-    		
-    inlines=open(infile1,'r').readlines()
-    
-    if inlines[-1]=='\n':
-    	inlines[-1:]=[]
-    
-    i=i+1
-    mi.append([])
-    mj.append([])
-    ol.append([])
-    
-    for line in inlines:
-    	if line=='\n':
-    		i=i+1
-    		mi.append([])
-    		mj.append([])
-    		ol.append([])
-    		
-    	else:
-    		mi[i].append(int(line.split()[0]))
-    		mj[i].append(int(line.split()[1]))
-    		ol[i].append(float(line.split()[2]))
-    				
-    mi=np.array(mi)
-    mj=np.array(mj)
-    ol=np.array(ol)
-    
-    #------------------------------------------------------------------
-    
-    inlines=open(infile2,'r').readlines()
-    
-    if inlines[-1]=='\n':
-    	inlines[-1:]=[]
-    
-    j=j+1
-    mi2.append([])
-    mj2.append([])
-    ol2.append([])
-    
-    for line in inlines:
-    	if line=='\n':
-    		j=j+1
-    		mi2.append([])
-    		mj2.append([])
-    		ol2.append([])
-    		
-    	else:
-    		mi2[j].append(int(line.split()[0]))
-    		mj2[j].append(int(line.split()[1]))
-    		ol2[j].append(float(line.split()[2]))
-    		
-    mi2=np.array(mi2)
-    mj2=np.array(mj2)
-    ol2=np.array(ol2)
-    
+
+    df_dist= pd.read_excel(infile_dist, header=0, index_col=0)
+    df_cros= pd.read_excel(infile_cros, header=0, index_col=0)
+
+    array_dist = np.flipud(df_dist.to_numpy())
+    array_cros = np.flipud(df_cros.to_numpy())
     
     sns.set()
     
     # Create masking matrix
-    mask_dist = np.triu(ol)
-    mask_cross = np.tril(ol2)
+    mask_dist = np.triu(array_dist)
+    mask_cros = np.tril(array_cros)
     
     color_line = 'black'
     f = 1
@@ -111,26 +53,18 @@ def crosscor_dist(form):
     ax=fig.add_subplot(111)
 
     # Plot distance map
-    ax1 = sns.heatmap(ol, vmin=0,vmax=16, mask=mask_dist, square=True,cmap=plt.cm.gist_yarg_r, 
+    ax1 = sns.heatmap(array_dist, vmin=0,vmax=16, mask=mask_dist, square=True,cmap=plt.cm.gist_yarg_r, 
                     cbar_kws={'label':'Distance [ $\AA{}$ ]','ticks':np.arange(0,18,2)})
     # Plot cross-correlation map 
-    ax2 = sns.heatmap(ol2,  vmin=-1,vmax=1, mask=mask_cross, square=True,cmap=plt.cm.RdBu_r, 
+    ax2 = sns.heatmap(array_cros,  vmin=-1,vmax=1, mask=mask_cros, square=True,cmap=plt.cm.RdBu_r, 
                     cbar_kws={'label': 'Cross-correlation','ticks':np.arange(-1.00,1.25,0.25)})
     
-    # Alternative brutal method to draw spines
-    for _, spine in ax.spines.items():
-        spine.set_visible(True)
     
     ax.set_xlabel(xlbl)
     
     ax.set_ylabel(ylbl)
     
-    gca()
-    
-    for item in range(mi.min(), mi.max()):
-        if item not in mi:
-           gca().add_patch(Rectangle((item,mj.min()),1,mj.max()-mj.min(),color='black'))
-           gca().add_patch(Rectangle((mi.min(),item),mi.max()-mi.min(),1,color='black'))
+    plt.gca()
     
     # Invert y-axis
     plt.gca().invert_yaxis()
@@ -141,14 +75,14 @@ def crosscor_dist(form):
     ax.set(yticks=positions, yticklabels=labels)
     ax.set(xticks=positions, xticklabels=labels)
     
-    if form == 0:
-        line_pos = [0,ol.shape[1], aa_num/2]
+    if form == "apo":
+        line_pos = [0,array_dist.shape[1], aa_num/2]
         plot_end = aa_num
-    elif form == 1:
-        line_pos = [0,ol.shape[1],aa_num/2, aa_num]
+    elif form == "holo1":
+        line_pos = [0,array_dist.shape[1],aa_num/2, aa_num]
         plot_end = aa_num + het_num
     else:
-        line_pos = [0,ol.shape[1],aa_num/2, aa_num, aa_num + het_num]
+        line_pos = [0,array_dist.shape[1],aa_num/2, aa_num, aa_num + het_num]
         plot_end = aa_num + 2*het_num
         
     ax.hlines(line_pos, *ax.get_xlim())
@@ -186,17 +120,16 @@ def crosscor_dist(form):
     sns.set_style("ticks")    
 
     # Draw box around heatmap
-    ax2.hlines([0,ol.shape[1]], *ax2.get_xlim())
-    ax2.vlines([0,ol.shape[1]], *ax2.get_ylim())
+    ax2.hlines([0,array_dist.shape[1]], *ax2.get_xlim())
+    ax2.vlines([0,array_dist.shape[1]], *ax2.get_ylim())
     
     print('Plot generated.')
     return plt, fig
 
-
 #%% Run crosscor_dist fucntion
-for f in [0,1,2]:
+for form in forms:
     plt.close('all')
-    plt, fig = crosscor_dist(m,f)
-    fig_path = 'graph-'+str(m)+'-'+str(f)
+    plt, fig = crosscor_dist(form)
+    fig_path = '6lu7_crosscor_dist_'+form
     fig.savefig(fig_path+'.png', dpi=600, bbox_inches='tight', format='png')
 print('Figures saved.')        
