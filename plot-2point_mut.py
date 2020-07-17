@@ -1,37 +1,43 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 10 13:23:08 2020
+This script plots 2-point mutational maps of relative fluactuation free energy change and global allostery for 6lu7 (SARS-CoV-2 Main Proteasse) ENM.
 
-@author: lolo
+Written by:
+            Igors Dubanevics (id583 at york dot ac dot uk)
+            Prof. Tom McLeish Group
+            University of York
+            Apr, 2020
+
 """
 # Import packages
-import os, sys, re
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
+inname_freeEn_wt = "6lu7_freeEn_wt.xlsx"
 
-data_apo = ("6lu7_2D-apo_kRk=0_25.xlsx","6lu7_2D-apo_kRk=4_00.xlsx")
-data_allo = ("6lu7_2D-allo_kRk=0_25.xlsx","6lu7_2D-allo_kRk=4_00.xlsx")
+innames_apo = ("6lu7_2D-apo_kRk=0_25.xlsx","6lu7_2D-apo_kRk=4_00.xlsx")
+innames_allo = ("6lu7_2D-allo_kRk=0_25.xlsx","6lu7_2D-allo_kRk=4_00.xlsx")
 
-outname_apo = ("6lu7_2D-apo_map_kRk=0_25","6lu7_2D-apo_map_kRk=4_00")
-outname_allo = ("6lu7_2D-allo_map_kRk=0_25","6lu7_2D-allo_map_kRk=4_00")
+outnames_apo = ("6lu7_2D-apo_map_kRk=0_25","6lu7_2D-apo_map_kRk=4_00")
+outnames_allo = ("6lu7_2D-allo_map_kRk=0_25","6lu7_2D-allo_map_kRk=4_00")
+
+lbl_apo = r"$(G_{mut}-G_{wt})/|G_{wt}|}$ [ $\%$ ]"
+lbl_allo = r"$K_2 / K_1$"
 
 # Total number of modes, amino acids and pairwise mutations
 mode_num = 100
 aa_num = 612
-mut_num = int(aa_num * (aa_num-1) / 2) + aa_num
 
+freeEn_wt = pd.read_excel(inname_freeEn_wt, header=0, index_col=0)  
+freeEn_sum_wt = freeEn_wt[:25].sum(axis=0)
 
-   
-for i in range(3):
-    infile_Gwt = 'results-'+str(i)+'-wt.txt'
-    inlines_Gwt = np.loadtxt(infile_Gwt)
-    G_allo_wt.append(inlines_Gwt)
 #%% Fill 2D mutational array
-ddGwt_sum = np.sum(G_allo_wt[2][:mode_sum] - 2 * G_allo_wt[1][:mode_sum] + G_allo_wt[0][:mode_sum]) 
+alloFreeEn_wt = freeEn_sum_wt[2] - 2 * freeEn_sum_wt[1] + freeEn_sum_wt[0] 
+k2_k1_wt = np.exp(alloFreeEn_wt) 
 
-def globalMap(dataframe, lbl, ctr)
+def globalMap(dataframe, lbl, ctr):
     xlbl='Amino Acid Number'
     ylbl='Amino Acid Number'
 
@@ -47,18 +53,16 @@ def globalMap(dataframe, lbl, ctr)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
-    ax = sns.heatmap(dataframe, center = ctr, square=True, cmap=plt.cm.RdBu_r, cbar_kws={'label': lbl})
+    ax = sns.heatmap(dataframe.iloc[::-1], center = ctr, square=True, cmap=plt.cm.RdBu_r, cbar_kws={'label': lbl})
     fig = ax.get_figure()
 
     # Set axis labels
     ax.set_xlabel(xlbl)
     ax.set_ylabel(ylbl)
-
-    # Invert y-axis
-    ax.invert_yaxis()
     plt.xticks(rotation=0)
+    ax.invert_yaxis()
+    
     # Plot active residues
-
     chain_len = int(aa_num/2)
     positions = ( 99, 199, 299, 99+chain_len, 199+chain_len, 299+chain_len)
     labels = ( "100", "200", "300", "100", "200", "300")
@@ -103,6 +107,21 @@ def globalMap(dataframe, lbl, ctr)
     ax2.hlines([0,plot_end], *ax2.get_xlim())
     ax2.vlines([0,plot_end], *ax2.get_ylim())
     
-    return plt
+    return fig
 
-plt.savefig(outname+'_'+str(mode_sum)+'modes.png',dpi=600, format='png')
+for i in range(2):
+    array_apo = None
+    array_allo = None
+    fig = None
+    
+    array_apo = pd.read_excel(innames_apo[i], header=0, index_col=0)
+    fig = globalMap(array_apo, lbl_apo, 0)
+    plt.savefig(outnames_apo[i]+'.png',dpi=600, format='png')
+    plt.close('all')
+
+    array_allo = pd.read_excel(innames_allo[i], header=0, index_col=0)
+    fig = globalMap(array_allo, lbl_allo, k2_k1_wt)
+    plt.savefig(outnames_allo[i]+'.png',dpi=600, format='png')
+    plt.close('all')
+
+print('Figures saved.')
