@@ -1,9 +1,9 @@
 # Computational Analysis of Dynamic Allostery and Control in the SARS-CoV-2 Main Protease
-Processed data and figures genration code for a project on an Elastic Network Model analysis of the SARS-CoV-2 Main Protease (M<sup>pro</sup>, aka 3CL<sup>pro</sup>).
+Processed data and figure genration codes for a project on an Elastic Network Model analysis of the SARS-CoV-2 main protease (M<sup>pro</sup>, aka 3CL<sup>pro</sup>).
 See a [preprint](https://www.biorxiv.org/content/10.1101/2020.05.21.105965v1) in bioRxiv.
 
 ## PDB
-We used wild-type [6LU7](https://www.rcsb.org/structure/6LU7) X-ray crystallographic structure to construct apo (ligand-free), holo1 (one ligand present) and holo2 protein forms (two ligands present, native form).
+We used [6LU7](https://www.rcsb.org/structure/6LU7) X-ray crystallographic structure of the main protease to construct apo (ligand-free), holo1 (one ligand present) and holo2 protein forms (two ligands present, native form).
 Note: all water molecues (`H2O`) were removed from all protein stucture PDB files.
 
 ## Software
