@@ -1,5 +1,5 @@
 # Computational Analysis of Dynamic Allostery and Control in the SARS-CoV-2 Main Protease
-Processed data and figures genration code for a project on an Elastic Network Model analysis of the SARS-CoV-2 Main Protease (M<sup>pro<\sup>, aka 3CL<sup>pro<\sup>).
+Processed data and figures genration code for a project on an Elastic Network Model analysis of the SARS-CoV-2 Main Protease (M<sup>pro</sup>, aka 3CL<sup>pro</sup>).
 See a [prepeint](https://www.biorxiv.org/content/10.1101/2020.05.21.105965v1) at bioRxiv.
 
 ## PDB
