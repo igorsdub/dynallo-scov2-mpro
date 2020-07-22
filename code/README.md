@@ -1,5 +1,8 @@
 # Visualization
 In order to generate the figures place scripts into 'data' directory and then run.
+For example, to generate the cross-correlation and distance maps enter in terminal
+'python plot-crosscor_dist.py'
+or run the cript in IDE, like [Spyder](https://www.spyder-ide.org/) available in [Anaconda](https://www.anaconda.com/products/individual) distribution. 
 
 ## plot-crosscor_dist.py
 Plots cross-correlation and distance maps for apo, holo1 and holo2 6LU7 structure forms.
