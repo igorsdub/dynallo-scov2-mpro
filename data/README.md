@@ -1,4 +1,5 @@
 # Data
+Processed data used to generate figures in the manuscript.
  
 ## 6lu7_freeEn.xlsx
 Computationally calculated fluctuation Gibbs free energy per mode of 6LU7 apo, holo1 and holo2 ENM forms over the first real 100 fluctuation modes. This is an example output for a single ENM used in this study.
